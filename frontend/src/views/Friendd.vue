@@ -96,8 +96,8 @@ import { useUserStore } from '@/stores/user'
 import FeedItem from '../components/FeedItem.vue'
 
 export default {
-    name: "FeedView",
-    components: { PeopleYouMayKnow, Trends, FeedItem },
+    name: "FriendsView",
+    components: { PeopleYouMayKnow, Trends},
 
     setup() {
         const userStore = useUserStore()
@@ -109,76 +109,16 @@ export default {
 
     data() {
         return {
-            posts: [],
-            user:{},
-            body:''
+
         }
     },
 
     mounted() {
-        this.getFeed()
-    },
 
-    /*updated() {
-        this.getFeed()
-    },*/
-
-    watch: { 
-        '$route.params.id': {
-            handler: function() {
-                this.getFeed()
-            },
-            deep: true,
-            immediate: true
-        }
     },
 
     methods:{
-        sendFriendshipRequest() {
-            axios
-                .post(`/api/friends/request/${this.$route.params.id}/`)
-                .then(response => {
-                    console.log('data', response.data)
-                    this.user = response.data.user
-                })
-                .catch(error => {
-                    console.log('error',error)
-                })
-        },
-
-        getFeed(){
-            axios
-                .get(`/api/posts/profile/${this.$route.params.id}/`)
-                .then(response => {
-                    console.log('data', response.data)
-                    this.posts = response.data.posts
-
-                    console.log('data2',this.posts)
-                })
-                .catch(error => {
-                    console.log('error',error)
-                })
-        },
-
-        submitForm() {
-            console.log('submitForm', this.body)
-
-            axios
-                .post('/api/posts/create/', {
-                    'body': this.body
-                })
-                .then(response => {
-                    console.log('data', response.data)
-
-                    this.posts.unshift(response.data)
-                    this.body=''
-                })
-                .catch(error => {
-                    console.log('error',error)
-                })
-        }
-
-
+        
     }
 
 
