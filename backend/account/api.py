@@ -2,7 +2,7 @@ from django.http import JsonResponse
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from .forms import SignupForm
 from .models import User, FriendshipRequest
-from .serializers import UserSerializer
+from .serializers import UserSerializer, FriendshipRequestSerializer
 
 
 @api_view(['GET'])
@@ -38,6 +38,22 @@ def signup(request):
         print(form.errors)
 
     return JsonResponse({'message':message})
+
+@api_view(['GET'])
+def friends(request, pk):
+    user = User.objects.get(pk=pk)
+    requests = []
+
+    if user == request.user:
+        requests = FriendshipRequest.objects.filter(created_for=request.user)
+
+    friends = user.friends.all()
+
+    return JsonResponse({
+        'user': UserSerializer(user),
+        'friends': UserSerializer(friends, many=True),
+        'requests': FriendshipRequestSerializer(requests, many=True)
+    }, safe=True)
 
 @api_view(['POST'])
 def send_friendship_request(request, pk):
