@@ -15,7 +15,38 @@
         </div>
 
         <div class="main-center col-span-2 space-y-4">
-            FriendsView
+            <div 
+                class="p-4 bg-white border border-gray-200 rounded-lg"
+                v-if="friendshipRequests.length"
+                >
+                <h2 class="text-2xl mb-6">Friendship requests</h2>
+                <div 
+                    class="p-4 text-center bg-gray-100 rounded-lg"
+                    v-for="friendshipRequest in friendshipRequests"
+                    v-bind:key="friendshipRequest.id"
+                >
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQh2ibh9YBLzRs29v8VE96dT1ow0TTfys_gAw&usqp=CAU" class="w-40 h-40 mb-6  mx-auto rounded-full">
+                    
+                    <p>
+                        <strong>
+                            <RouterLink :to="{name: 'profile', params:{'id': friendshipRequest.created_by.id}}">{{ friendshipRequest.created_by.name }}</RouterLink>
+                        </strong>
+                    </p>
+
+                    <div class="mt-6 flex space-x-8 justify-around">
+                        <p class="text-xs text-gray-500">182 friends</p>
+                        <p class="text-xs text-gray-500">120 posts</p>
+                    </div>
+                    <div class="mt-6 space-x-6">
+                        <button class="inline-block py-4 px-6 bg-purple-600 text-white rounded-lg" @click="handleRequest('accepted', friendshipRequest.created_by.id)">Accept</button>
+                        <button class="inline-block py-4 px-6 bg-red-600 text-white rounded-lg" @click="handleRequest('rejected', friendshipRequest.created_by.id)">Reject</button>
+                    </div>
+
+
+                </div>
+            </div>
+
+            <hr>
 
         </div>
 
@@ -48,7 +79,7 @@ export default {
     data() {
         return {
             user:{},
-            friendshipRequest: [],
+            friendshipRequests: [],
             friends: []
         }
     },
@@ -60,10 +91,10 @@ export default {
     methods:{
         getFriends(){
             axios
-                .get(`/api/posts/profile/${this.$route.params.id}/friends/`)
+                .get(`/api/friends/${this.$route.params.id}/`)
                 .then(response => {
                     console.log('data', response.data)
-                    this.friendshipRequest = response.data.requests
+                    this.friendshipRequests = response.data.requests
                     this.friends = response.data.friends
                     this.user = response.data.user
 
@@ -72,7 +103,22 @@ export default {
                     console.log('error',error)
                 })
         
-    }
+        },
+
+        handleRequest(status,pk) {
+            console.log('handleRequest', status)
+
+            axios
+                .post(`/api/friends/${pk}/${status}`)
+                .then(response => {
+                    console.log('data', response.data)
+
+                })
+                .catch(error => {
+                    console.log('error',error)
+                })
+        
+        }
 }
 
 

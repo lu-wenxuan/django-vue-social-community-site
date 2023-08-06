@@ -46,13 +46,15 @@ def friends(request, pk):
 
     if user == request.user:
         requests = FriendshipRequest.objects.filter(created_for=request.user)
+        requests = FriendshipRequestSerializer(requests, many=True)
+        requests = requests.data
 
     friends = user.friends.all()
 
     return JsonResponse({
-        'user': UserSerializer(user),
-        'friends': UserSerializer(friends, many=True),
-        'requests': FriendshipRequestSerializer(requests, many=True)
+        'user': UserSerializer(user).data,
+        'friends': UserSerializer(friends, many=True).data,
+        'requests': requests
     }, safe=True)
 
 @api_view(['POST'])
@@ -60,6 +62,15 @@ def send_friendship_request(request, pk):
     user = User.objects.get(pk=pk)
     print('send_friendship_request', pk)
 
-    friendship_request = FriendshipRequest(created_for=user, created_by=request.user)
+    friendship_request = FriendshipRequest.objects.create(created_for=user, created_by=request.user)
 
     return JsonResponse({'message':'friendship request created'})
+
+@api_view(['POST'])
+def handle_request(request, pk, status):
+    user = User.objects.get(pk=pk)
+    friendship_request = FriendshipRequest.objects.filter(created_for=request.user).get(created_by=user)
+    friendship_request.status = status
+    friendship_request.save()
+
+    return JsonResponse({'message':'friendship request update'})
