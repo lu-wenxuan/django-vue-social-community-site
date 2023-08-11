@@ -45,7 +45,7 @@ def friends(request, pk):
     requests = []
 
     if user == request.user:
-        requests = FriendshipRequest.objects.filter(created_for=request.user)
+        requests = FriendshipRequest.objects.filter(created_for=request.user, status=FriendshipRequest.SENT)
         requests = FriendshipRequestSerializer(requests, many=True)
         requests = requests.data
 
@@ -72,5 +72,8 @@ def handle_request(request, pk, status):
     friendship_request = FriendshipRequest.objects.filter(created_for=request.user).get(created_by=user)
     friendship_request.status = status
     friendship_request.save()
+
+    user.friends.add(request.user)
+    user.save()
 
     return JsonResponse({'message':'friendship request update'})

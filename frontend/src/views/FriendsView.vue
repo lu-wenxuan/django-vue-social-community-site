@@ -44,9 +44,31 @@
 
 
                 </div>
+                <hr>
             </div>
 
-            <hr>
+         
+            <div
+                class="p-4 bg-white border border-gray-200 rounded-lg grid grid-cols-2 gap-4"
+                v-if="friends.length"
+            >
+                <div
+                    class="p-4 text-center bg-gray-100 rounded-lg"
+                    v-for="user in friends"
+                    v-bind:key="user.id"
+                >
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQh2ibh9YBLzRs29v8VE96dT1ow0TTfys_gAw&usqp=CAU" class="mb-6  mx-auto rounded-full">
+                <p>
+                    <strong>
+                        <RouterLink :to="{name: 'profile', params:{'id':user.id}}">{{ user.name }}</RouterLink>
+                    </strong>
+                </p>
+                <div class="mt-6 flex space-x-8 justify-around">
+                    <p class="text-xs text-gray-500">182 friends</p>
+                    <p class="text-xs text-gray-500">120 posts</p>
+                </div>
+                </div>
+            </div>
 
         </div>
 
@@ -109,7 +131,8 @@ export default {
             console.log('handleRequest', status)
 
             axios
-                .post(`/api/friends/${pk}/${status}`)
+           
+                .post(`/api/friends/${pk}/${status}/`)
                 .then(response => {
                     console.log('data', response.data)
 
