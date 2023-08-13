@@ -6,7 +6,7 @@
                 <p><strong>{{ user.name }}</strong></p>
 
                 <div class="mt-6 flex space-x-8 justify-around">
-                    <p class="text-xs text-gray-500">182 friends</p>
+                    <p class="text-xs text-gray-500">{{ user.friends_count }} friends</p>
                     <p class="text-xs text-gray-500">120 posts</p>
                 </div>
 
@@ -34,7 +34,7 @@
                     </p>
 
                     <div class="mt-6 flex space-x-8 justify-around">
-                        <p class="text-xs text-gray-500">182 friends</p>
+                        <p class="text-xs text-gray-500">{{ user.friends_count }}  friends</p>
                         <p class="text-xs text-gray-500">120 posts</p>
                     </div>
                     <div class="mt-6 space-x-6">
@@ -64,7 +64,7 @@
                     </strong>
                 </p>
                 <div class="mt-6 flex space-x-8 justify-around">
-                    <p class="text-xs text-gray-500">182 friends</p>
+                    <p class="text-xs text-gray-500">{{ user.friends_count }} friends</p>
                     <p class="text-xs text-gray-500">120 posts</p>
                 </div>
                 </div>
@@ -86,6 +86,7 @@ import axios from 'axios';
 import { useUserStore } from '@/stores/user'
 import FeedItem from '../components/FeedItem.vue'
 
+
 export default {
     name: "FriendsView",
     components: { PeopleYouMayKnow, Trends},
@@ -94,7 +95,8 @@ export default {
         const userStore = useUserStore()
 
         return {
-            userStore
+            userStore,
+          
         }
     },
 
@@ -135,6 +137,7 @@ export default {
                 .post(`/api/friends/${pk}/${status}/`)
                 .then(response => {
                     console.log('data', response.data)
+
 
                 })
                 .catch(error => {

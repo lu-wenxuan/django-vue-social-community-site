@@ -6,7 +6,7 @@
                 <p><strong>{{ user.name }}</strong></p>
 
                 <div class="mt-6 flex space-x-8 justify-around">
-                    <RouterLink :to="{name: 'friends', params: {id: user.id }}" class="text-xs text-gray-500">182 friends</RouterLink>
+                    <RouterLink :to="{name: 'friends', params: {id: user.id }}" class="text-xs text-gray-500">{{ user.friends_count }} friends</RouterLink>
                     <p class="text-xs text-gray-500">120 posts</p>
                 </div>
 
@@ -95,6 +95,7 @@ import axios from 'axios';
 import { useUserStore } from '@/stores/user'
 import FeedItem from '../components/FeedItem.vue'
 import { RouterLink } from 'vue-router';
+import {useToastStore} from '@/stores/toast'
 
 export default {
     name: "FeedView",
@@ -102,9 +103,11 @@ export default {
 
     setup() {
         const userStore = useUserStore()
+        const toastStore = useToastStore()
 
         return {
-            userStore
+            userStore,
+            toastStore
         }
     },
 
@@ -140,7 +143,13 @@ export default {
                 .post(`/api/friends/${this.$route.params.id}/request/`)
                 .then(response => {
                     console.log('data', response.data)
-                    this.user = response.data.user
+                    if (response.data.message == 'request already sent'){
+                        this.toastStore.showToast(5000, 'request already sent!','bg-red-300')
+                    }
+                    else {
+                        this.toastStore.showToast(5000, 'request sent!','bg-emerald-300')
+                    }
+                  
                 })
                 .catch(error => {
                     console.log('error',error)
@@ -153,6 +162,7 @@ export default {
                 .then(response => {
                     console.log('data', response.data)
                     this.posts = response.data.posts
+                    this.user = response.data.user
 
                     console.log('data2',this.posts)
                 })
