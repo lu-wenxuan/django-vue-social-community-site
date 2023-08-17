@@ -5,14 +5,22 @@ from rest_framework.decorators import api_view, authentication_classes, permissi
 from account.models import User
 from account.serializers import UserSerializer
 
-from .models import Post
+from .models import Post, Like
 from .forms import PostForm
 from .serializers import PostSerializer
 
 @api_view(['GET'])
 def post_list(request):
-    posts = Post.objects.all() #change later to feed
+    print(request.user.id)
+    user_ids = [request.user.id]
+
+    for user in request.user.friends.all():
+        user_ids.append(user.id)
+   
+    posts = Post.objects.filter(created_by_id__in=list(user_ids)) 
+
     serializer = PostSerializer(posts, many=True)
+    
     return JsonResponse(serializer.data, safe=False)
 
 # Create your views here.
@@ -44,3 +52,13 @@ def post_create(request):
 
     else:
         return JsonResponse({'error':'add something here later'})
+    
+@api_view(['POST'])
+def post_like(request, pk):
+    post = Post.objects.get(pk=pk)
+    #post.likes_count = post.likes_count + 1
+    #post.save()
+    print(post.likes.filter(created_by=request.user))
+
+      
+    return JsonResponse({'message':'like post'})

@@ -1,8 +1,14 @@
 <template>
     <div class="max-w-7xl mx-auto grid grid-cols-4 gap-4">
         <div class="main-left col-span-1">
-            <div class="p-4 bg-white border border-gray-200 text-center rounded-lg">
-                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQh2ibh9YBLzRs29v8VE96dT1ow0TTfys_gAw&usqp=CAU" class="mb-6 h-40 rounded-full">
+            <div class="p-4 bg-white border border-gray-200 text-center rounded-lg w-full justify-center flex flex-col">
+                
+                <div class="w-full  flex items-center justify-center mb-6">
+                    <div class="w-[100px] h-[100px] rounded-full" >
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQh2ibh9YBLzRs29v8VE96dT1ow0TTfys_gAw&usqp=CAU" class="object-fill w-full h-full rounded-full">
+                    </div>
+
+                </div>
                 <p><strong>{{ user.name }}</strong></p>
 
                 <div class="mt-6 flex space-x-8 justify-around">
@@ -10,8 +16,22 @@
                     <p class="text-xs text-gray-500">120 posts</p>
                 </div>
 
-                <div class="mt-6 flex">
-                    <button class="inline-block py-4 px-3 bg-purple-600 text-xs text-white rounded-lg" @click="sendFriendshipRequest">Send friendship request</button>
+                <div class="mt-6">
+                    <button 
+                        class="inline-block py-4 px-6 bg-purple-600 text-xs text-white rounded-lg" 
+                        @click="sendFriendshipRequest"
+                        v-if="userStore.user.id !== user.id"
+                    >
+                    Send friendship request
+                    </button>
+
+                    <button 
+                        class="inline-block py-4 px-6 bg-red-600 text-xs text-white rounded-lg" 
+                        @click="logout"
+                        v-if="userStore.user.id === user.id"
+                    >
+                    Log out
+                    </button>
                 </div>
             </div>
 
@@ -114,7 +134,9 @@ export default {
     data() {
         return {
             posts: [],
-            user:{},
+            user:{
+                id:null
+            },
             body:''
         }
     },
@@ -187,6 +209,13 @@ export default {
                 .catch(error => {
                     console.log('error',error)
                 })
+        },
+
+        logout() {
+            console.log('Log out')
+
+            this.userStore.removeToken()
+            this.$router.push('/login')
         }
 
 
