@@ -4,12 +4,25 @@
 
             <div class="p-4 bg-white border border-gray-200 rounded-lg">
                 <div class="space-y-4">
-                    <div class="flex items-center justify-between">
+                    <div class="flex items-center justify-between"
+                        v-for="conversation in conversations"
+                        v-bind:key="conversation.id"
+                    >
                         <div class="flex itemd-center space-x-2">
                             <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQh2ibh9YBLzRs29v8VE96dT1ow0TTfys_gAw&usqp=CAU" class="w-[40px] rounded-full">
-                            <p class="text-xs"><strong>Code with Wenxuan</strong></p>
+                            
+                            <template
+                                v-for="user in conversation.users"
+                                v-bind:key="user.id">
+                            <p class="text-xs font-bold"                               
+                                v-if="user.id !==userStore.user.id"
+                            >
+                                {{ user.name }}
+
+                            </p>
+                            </template>
                         </div>
-                        <span class="text-xs text-gray-500">18 minutes age</span>
+                        <span class="text-xs text-gray-500">{{ conversation.modified_at_formatted }} ago</span>
                     </div>
                 </div>
             </div>
@@ -53,7 +66,7 @@
                 </div>
 
                 <div class="p-4 border-t border-gray-100 flex justify-between">
-                    <a href="#" class="inline-block py-4 px-6 bg-purple-600 text-white rounded-lg">Post</a>
+                    <a href="#" class="inline-block py-4 px-6 bg-purple-600 text-white rounded-lg">Send</a>
 
                 </div>
 
@@ -62,3 +75,52 @@
 
     </div>
 </template>
+
+<script>
+import axios from 'axios'
+import {useUserStore} from '@/stores/user'
+
+export default (await import('vue')).defineComponent({
+    name: 'chat',
+
+    setup(){
+        const userStore = useUserStore()
+        return {
+            userStore
+        }
+    },
+
+    data() {
+        return{
+            conversations: [],
+            activeConversation: {}
+        }
+    },
+
+    mounted() {
+        this.getConversations()
+    },
+
+    methods: {
+        getConversations() {
+            console.log('getconversations')
+
+            axios
+                .get('/api/chat/')
+                .then(response => {
+                    console.log(response.data)
+                    this.conversations = response.data
+
+                    if (this.conversations.length) {
+                        this.activeConversation = this.conversations[0]
+                    }
+
+                    console.log(this.activeConversation)
+                }) 
+                .catch(error =>{
+                    console.log(error)
+                })
+        }
+    }
+})
+</script>

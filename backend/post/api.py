@@ -5,9 +5,9 @@ from rest_framework.decorators import api_view, authentication_classes, permissi
 from account.models import User
 from account.serializers import UserSerializer
 
-from .models import Post, Like
+from .models import Post, Like, Comment
 from .forms import PostForm
-from .serializers import PostSerializer, PostDetailSerializer
+from .serializers import PostSerializer, PostDetailSerializer, CommentSerializer
 
 @api_view(['GET'])
 def post_list(request):
@@ -78,3 +78,19 @@ def post_like(request, pk):
 
     else:
         return JsonResponse({'message':'post already liked'})
+    
+
+@api_view(['POST'])
+def post_create_comment(request, pk):
+
+    comment = Comment.objects.create(body=request.data.get('body'), created_by=request.user)
+
+    post = Post.objects.get(pk=pk)
+    post.comments.add(comment)
+    print(request.data)
+    post.comments_count=post.comments_count+1
+    post.save()
+
+    serializer = CommentSerializer(comment)
+
+    return JsonResponse(serializer.data, safe=False)

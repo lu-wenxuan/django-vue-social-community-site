@@ -61,6 +61,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'post',
     'search',
+    'chat',
 ]
 
 MIDDLEWARE = [
