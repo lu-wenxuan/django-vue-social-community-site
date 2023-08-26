@@ -32,7 +32,10 @@
         <div class="main-center col-span-3 space-y-4">
             <div class="bg-white border border-gray-200 rounded-lg">
                 <div class="flex flex-col flex-grow p-4">
-                    <div class="flex w-full mt-2 space-x-3 max-w-md ml-auto justify-end">
+                    <div class="flex w-full mt-2 space-x-3 max-w-md ml-auto justify-end"
+                        v-for="message in activeConversation.messages"
+                        v-bind:key="message.id"
+                    >
                         <div>
                             <div class="bg-blue-600 text-white p-3 rounded-l-lg rounded-br-lg">
                                 <p class="text-sm">hello i am awenxuan, code with me!</p>
@@ -115,9 +118,23 @@ export default (await import('vue')).defineComponent({
                         this.activeConversation = this.conversations[0]
                     }
 
-                    console.log(this.activeConversation)
+                    this.getMessages()
                 }) 
                 .catch(error =>{
+                    console.log(error)
+                })
+        },
+
+        getMessages(){
+            console.log('getMessage')
+            axios
+                .get(`/api/chat/${this.activeConversation.id}/`)
+                .then(response => {
+                    console.log(response.data)
+
+                    this.activeConversation = response.data
+                })
+                .catch(error => {
                     console.log(error)
                 })
         }
