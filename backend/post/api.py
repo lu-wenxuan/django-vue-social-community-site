@@ -5,9 +5,9 @@ from rest_framework.decorators import api_view, authentication_classes, permissi
 from account.models import User
 from account.serializers import UserSerializer
 
-from .models import Post, Like, Comment
+from .models import Post, Like, Comment, Trend
 from .forms import PostForm
-from .serializers import PostSerializer, PostDetailSerializer, CommentSerializer
+from .serializers import PostSerializer, PostDetailSerializer, CommentSerializer, TrendSerializer
 
 @api_view(['GET'])
 def post_list(request):
@@ -18,6 +18,11 @@ def post_list(request):
         user_ids.append(user.id)
    
     posts = Post.objects.filter(created_by_id__in=list(user_ids)) 
+
+    trend = request.GET.get('trend', '')
+
+    if trend:
+        posts = posts.filter(body__icontains='#' + trend)
 
     serializer = PostSerializer(posts, many=True)
     
@@ -56,6 +61,9 @@ def post_create(request):
         post.created_by = request.user
         post.save()
 
+        user = request.user
+        user.posts_count = user.posts_count+1
+        user.save()
 
         serializer = PostSerializer(post)
         return JsonResponse(serializer.data, safe=False)
@@ -94,3 +102,10 @@ def post_create_comment(request, pk):
     serializer = CommentSerializer(comment)
 
     return JsonResponse(serializer.data, safe=False)
+
+@api_view(['GET'])
+def get_trends(request):
+    serializer = TrendSerializer(Trend.objects.all(), many = True)
+    return JsonResponse(serializer.data, safe=False)
+
+          

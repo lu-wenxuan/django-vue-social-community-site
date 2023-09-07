@@ -21,7 +21,7 @@
                     v-for="user in users"
                     v-bind:key="user.id"
                 >
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQh2ibh9YBLzRs29v8VE96dT1ow0TTfys_gAw&usqp=CAU" class="mb-6 rounded-full">
+                    <img :src="user.get_avatar" class="mb-6 rounded-full">
                     
                     <p>
                         <strong>
@@ -31,7 +31,7 @@
 
                     <div class="mt-6 flex space-x-8 justify-around">
                         <p class="text-xs text-gray-500">{{ user.friends_count }} friends</p>
-                        <p class="text-xs text-gray-500">120 posts</p>
+                        <p class="text-xs text-gray-500">{{ user.posts_count }} posts</p>
                     </div>
                 </div>
             </div>

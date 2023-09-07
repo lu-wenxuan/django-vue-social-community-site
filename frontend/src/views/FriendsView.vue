@@ -2,12 +2,12 @@
     <div class="max-w-7xl mx-auto grid grid-cols-4 gap-4">
         <div class="main-left col-span-1">
             <div class="p-4 bg-white border border-gray-200 text-center rounded-lg">
-                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQh2ibh9YBLzRs29v8VE96dT1ow0TTfys_gAw&usqp=CAU" class="mb-6 h-40 rounded-full">
+                <img :src="user.get_avatar" class="mb-6 mx-auto h-40 w-40 rounded-full">
                 <p><strong>{{ user.name }}</strong></p>
 
                 <div class="mt-6 flex space-x-8 justify-around">
                     <p class="text-xs text-gray-500">{{ user.friends_count }} friends</p>
-                    <p class="text-xs text-gray-500">120 posts</p>
+                    <p class="text-xs text-gray-500">{{ user.posts_count }} posts</p>
                 </div>
 
             </div>
@@ -25,7 +25,7 @@
                     v-for="friendshipRequest in friendshipRequests"
                     v-bind:key="friendshipRequest.id"
                 >
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQh2ibh9YBLzRs29v8VE96dT1ow0TTfys_gAw&usqp=CAU" class="w-40 h-40 mb-6  mx-auto rounded-full">
+                    <img :src="friendshipRequest.created_by.get_avatar" class="w-40 h-40 mb-6  mx-auto rounded-full">
                     
                     <p>
                         <strong>
@@ -35,7 +35,7 @@
 
                     <div class="mt-6 flex space-x-8 justify-around">
                         <p class="text-xs text-gray-500">{{ user.friends_count }}  friends</p>
-                        <p class="text-xs text-gray-500">120 posts</p>
+                        <p class="text-xs text-gray-500">{{ user.posts_count }} posts</p>
                     </div>
                     <div class="mt-6 space-x-6">
                         <button class="inline-block py-4 px-6 bg-purple-600 text-white rounded-lg" @click="handleRequest('accepted', friendshipRequest.created_by.id)">Accept</button>
@@ -57,7 +57,7 @@
                     v-for="user in friends"
                     v-bind:key="user.id"
                 >
-                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQh2ibh9YBLzRs29v8VE96dT1ow0TTfys_gAw&usqp=CAU" class="mb-6  mx-auto rounded-full">
+                <img :src="user.get_avatar" class="mb-6 w-40 h-40 mx-auto rounded-full">
                 <p>
                     <strong>
                         <RouterLink :to="{name: 'profile', params:{'id':user.id}}">{{ user.name }}</RouterLink>
@@ -65,7 +65,7 @@
                 </p>
                 <div class="mt-6 flex space-x-8 justify-around">
                     <p class="text-xs text-gray-500">{{ user.friends_count }} friends</p>
-                    <p class="text-xs text-gray-500">120 posts</p>
+                    <p class="text-xs text-gray-500">{{ user.posts_count }} posts</p>
                 </div>
                 </div>
             </div>

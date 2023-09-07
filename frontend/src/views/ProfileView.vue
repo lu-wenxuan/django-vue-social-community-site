@@ -5,15 +5,15 @@
                 
                 <div class="w-full  flex items-center justify-center mb-6">
                     <div class="w-[100px] h-[100px] rounded-full" >
-                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQh2ibh9YBLzRs29v8VE96dT1ow0TTfys_gAw&usqp=CAU" class="object-fill w-full h-full rounded-full">
+                        <img :src="user.get_avatar" class="object-fill w-full h-full rounded-full">
                     </div>
 
                 </div>
                 <p><strong>{{ user.name }}</strong></p>
 
-                <div class="mt-6 flex space-x-8 justify-around">
+                <div class="mt-6 flex space-x-8 justify-around" v-if="user.id">
                     <RouterLink :to="{name: 'friends', params: {id: user.id }}" class="text-xs text-gray-500">{{ user.friends_count }} friends</RouterLink>
-                    <p class="text-xs text-gray-500">120 posts</p>
+                    <p class="text-xs text-gray-500">{{ user.posts_count }} posts</p>
                 </div>
 
                 <div class="mt-6">
@@ -24,6 +24,23 @@
                     >
                     Send friendship request
                     </button>
+
+                    <button 
+                        class="inline-block mt-4 py-4 px-6 bg-purple-600 text-xs text-white rounded-lg" 
+                        @click="SendDirectMessage"
+                        v-if="userStore.user.id !== user.id"
+                    >
+                    Send direct message
+                    </button>
+
+
+                    <RouterLink 
+                        class="inline-block mr-2 py-4 px-6 bg-purple-600 text-xs text-white rounded-lg" 
+                        to="/profile/edit"
+                        v-if="userStore.user.id === user.id"
+                    >
+                    Edit Profile
+                    </RouterLink>
 
                     <button 
                         class="inline-block py-4 px-6 bg-red-600 text-xs text-white rounded-lg" 
@@ -160,6 +177,21 @@ export default {
     },
 
     methods:{
+
+        SendDirectMessage(){
+            console.log('sendDirectMessage')
+
+            axios
+                .get(`/api/chat/${this.$route.params.id}/get_or_create/`)
+                .then(response => {
+                    console.log(response.data)
+
+                    this.$router.push('/chat')
+                })
+                .catch(error =>{
+                    console.log('error', error)
+                })
+        },
         sendFriendshipRequest() {
             axios
                 .post(`/api/friends/${this.$route.params.id}/request/`)
@@ -187,6 +219,7 @@ export default {
                     this.user = response.data.user
 
                     console.log('data2',this.posts)
+                    console.log('http://127.0.0.1:8000' + this.user.avatar)
                 })
                 .catch(error => {
                     console.log('error',error)
@@ -205,6 +238,7 @@ export default {
 
                     this.posts.unshift(response.data)
                     this.body=''
+                    this.user.posts_count += 1
                 })
                 .catch(error => {
                     console.log('error',error)

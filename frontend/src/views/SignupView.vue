@@ -104,6 +104,7 @@ export default {
                             this.form.password1=''
                             this.form.password2=''
                         } else {
+
                             this.toastStore.showToast(5000, 'Something went wrong!','bg-red-300')
                         }
                     })
