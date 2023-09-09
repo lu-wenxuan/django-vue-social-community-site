@@ -47,16 +47,15 @@
 import axios from 'axios'
 
 import { useUserStore } from '@/stores/user'
-import {useToastStore} from '@/stores/toast'
 
 export default {
     setup() {
         const userStore = useUserStore()
-        const toastStore = useToastStore()
+ 
 
         return {
             userStore,
-            
+
         }
     },
 
@@ -88,6 +87,7 @@ export default {
                     .then(response => {
                         this.userStore.setToken(response.data)
 
+
                         axios.defaults.headers.common["Authorization"] = "Bearer " + response.data.access;
                     })
                     .catch(error => {
@@ -96,7 +96,7 @@ export default {
                         this.errors.push('The email or password is incorrect! Or the user is not activated!')
                     })
             }
-            console.log(this.errors)
+           
             
             if (this.errors.length === 0) {
                 await axios

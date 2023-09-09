@@ -104,9 +104,16 @@ export default {
                             this.form.password1=''
                             this.form.password2=''
                         } else {
+                            const data = JSON.parse(response.data.message)
 
+                            for (const key in data){
+                                console.log(key, data[key][0].message)
+                                this.errors.push(data[key][0].message)
+                            }
                             this.toastStore.showToast(5000, 'Something went wrong!','bg-red-300')
                         }
+
+                        console.log(response.data)
                     })
                     .catch(error=> {
                         console.log('error',error)

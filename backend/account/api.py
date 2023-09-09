@@ -35,10 +35,12 @@ def signup(request):
 
         #send verification email later!
     else:
-        message='error'
-      
+       
+        message=form.errors.as_json()
 
-    return JsonResponse({'message':message})
+    print(message)
+      
+    return JsonResponse({'message':message}, safe=False)
 
 @api_view(['GET'])
 def friends(request, pk):
